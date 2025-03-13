@@ -1,0 +1,17 @@
+
+html
+  head
+    title Login Page
+    link(rel='stylesheet', href='/css/login.css')
+  body(class="bg-cover bg-center" style="background-image: url('/images/background.jpg');")
+      .login-container
+        h1 Login
+        form(action="/login", method="post")
+          div
+            label(for="username") Username:
+            input(type="text", id="username", name="username")
+          div
+            label(for="password") Password:
+            input(type="password", id="password", name="password")
+          div
+            button(type="submit") Login
