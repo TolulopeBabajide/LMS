@@ -1,0 +1,19 @@
+{
+  "name": "lms",
+  "version": "1.0.0",
+  "description": "BookOrbit is a digital Library Management System that allows users rent and borrow books and journals from our digital library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TolulopeBabajide/LMS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TolulopeBabajide/LMS/issues"
+  },
+  "homepage": "https://github.com/TolulopeBabajide/LMS#readme"
+}
