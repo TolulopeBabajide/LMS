@@ -39,6 +39,21 @@ app.get("/goodbye", function (req, res) {
 app.get("/login", function (req, res) {
   res.render("login");
 });
+app.get("/dashBoard", function (req, res) {
+  res.render("dashBoard");
+});
+app.get("/uploadBook", function (req, res) {
+  res.render("uploadBook");
+});
+app.get("/uploadBookList", function (req, res) {
+  res.render("uploadBookList");
+});
+app.get("/uploadSucessfull", function (req, res) {
+  res.render("uploadSucessfull");
+});
+app.get("/overdueBook", function (req, res) {
+  res.render("overdueBook");
+});
 
 app.get("/cover", function (req, res) {
   res.render("cover");
