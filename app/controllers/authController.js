@@ -118,3 +118,25 @@ exports.userLogin = [loginLimiter, async (req, res) => {
         res.status(500).json({ error: 'User login failed' });
     }
 }];
+
+
+exports.logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            logger.error('❌ Logout failed:', err); // Use a proper logger
+            return res.status(500).json({ error: 'Failed to log out. Please try again.' });
+        }
+
+        // Clear the session cookie
+        res.clearCookie('connect.sid', {
+            path: '/', // Ensure the cookie path matches the one used in session setup
+            httpOnly: true, // Ensure the cookie is HTTP-only
+            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+            sameSite: 'strict', // Prevent CSRF attacks
+        });
+
+        // Redirect based on user role (optional)
+        const redirectUrl = req.session?.user?.role === 'admin' ? '/auth/admin-login' : '/auth/login';
+        res.redirect(redirectUrl);
+    });
+};

@@ -49,6 +49,8 @@ app.get("/db_test", function (req, res) {
 
 
 // Routes
+app.use('/auth', require('./routes/authRoutes'));
+
 app.get('/admin/dashboard', ensureAuthenticated, ensureAdmin, (req, res) => {
   res.render('adminDashboard', { user: req.session.user });
 });
@@ -69,6 +71,7 @@ app.get("/cover", function (req, res) {
 app.use(errorHandler);
 
 // Start server on port 3000
-app.listen(3000, function () {
-  console.log(`Server running at http://127.0.0.1:3000/`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => cconsole.log(`Server running at http://127.0.0.1:${PORT}/`));
+
+
