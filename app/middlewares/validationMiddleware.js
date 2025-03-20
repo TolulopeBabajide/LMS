@@ -23,3 +23,4 @@ exports.validateRegistration = [
         next();
     }
 ];
+

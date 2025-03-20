@@ -3,15 +3,21 @@ const router = express.Router();
 const authController = require('./controllers/authController');
 
 // Admin routes
-router.get('/admin-login', authController.adminLoginPage);
+router.get('/admin-login', authController.adminLogin);
 router.post('/admin-login', authController.adminLogin);
 
-// User routes
-router.get('/user-login', authController.userLoginPage);
-router.post('/user-login', authController.userLogin);
 
 // Registration route
-router.get('/register', authController.registerPage);
+router.get('/register', authController.register);
 router.post('/register', authController.register);
+
+
+// User routes
+router.get('/login', authController.userLogin);
+router.post('/login', authController.userLogin);
+
+
+// Logout route
+router.get('/logout', authController.logout);
 
 module.exports = router;
