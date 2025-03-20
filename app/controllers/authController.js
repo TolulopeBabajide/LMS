@@ -109,10 +109,10 @@ exports.userLogin = [loginLimiter, async (req, res) => {
         // Set session with user data and expiry
         req.session.user = user;
         req.session.cookie.expires = new Date(Date.now() + 60 * 60 * 1000); // 1-hour session expiry
-        req.session.cookie.secure = true; // Ensure cookies are only sent over HTTPS
+        req.session.cookie.secure = false; // Ensure cookies are only sent over HTTPS
 
         logger.info(`User login successful for username ${username}`);
-        res.redirect('/books');
+        res.redirect('/dashboard');
     } catch (error) {
         logger.error(`User login failed: ${error.message}`);
         res.status(500).json({ error: 'User login failed' });
