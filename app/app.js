@@ -2,8 +2,8 @@
 const express = require("express");
 const session = require('express-session');
 const logger = require('./utils/logger');
-const { errorHandler } = require('./middleware/errorMiddleware');
-const { ensureAuthenticated, ensureAdmin, ensureUser } = require('./middleware/authMiddleware');
+const { errorHandler } = require('./middlewares/errorMiddleware');
+const { ensureAuthenticated, ensureAdmin, ensureUser } = require('./middlewares/authMiddleware');
 
 
 // Create express app
@@ -55,16 +55,16 @@ app.get('/admin/dashboard', ensureAuthenticated, ensureAdmin, (req, res) => {
   res.render('adminDashboard', { user: req.session.user });
 });
 
-app.get('/dashboard', ensureAuthenticated, ensureUser, (req, res) => {
-  res.render('userDashboard', { user: req.session.user });
+app.get('/dashBoard', ensureAuthenticated, ensureUser, (req, res) => {
+  res.render('dashBoard', { user: req.session.user });
 });
 
 app.get("/login", function (req, res) {
   res.render("login");
 });
-app.get("/dashBoard", function (req, res) {
-  res.render("dashBoard");
-});
+// app.get("/dashBoard", function (req, res) {
+//   res.render("dashBoard");
+// });
 app.get("/uploadBook", function (req, res) {
   res.render("uploadBook");
 });
