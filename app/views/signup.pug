@@ -13,13 +13,13 @@ html(lang="en")
       form#signup-form
         .form-name
           .form-group
-            label.name(for="first-name") Name
-              input(type="text" id="first-name" name="first-name" placeholder="Enter First name" required)
+            label.name(for="username") Username
+              input(type="text" id="username" name="username" placeholder="Enter your username" required)
               span.error-message Required
-          .form-group
-            label.name(for="other-name") Other name
-              input(type="text" id="other-name" name="other-name" placeholder="Enter other name" required)
-              span.error-message Required
+          //- .form-group
+          //-   label.name(for="other-name") Other name
+          //-     input(type="text" id="other-name" name="other-name" placeholder="Enter other name" required)
+          //-     span.error-message Required
         .form-group
           label.email(for="email") Email
             input(type="email" id="email" name="email" placeholder="Enter Email here" required)

@@ -66,12 +66,13 @@ app.get('/user/dashboard', ensureAuthenticated, ensureUser, (req, res) => {
 });
 
 // General Views
+app.get("/register", (req, res) => res.render("signup"));
 app.get("/login", (req, res) => res.render("login"));
 app.get("/uploadBook", (req, res) => res.render("uploadBook"));
 app.get("/uploadBookList", (req, res) => res.render("uploadBookList"));
 app.get("/uploadSuccessful", (req, res) => res.render("uploadSuccessful"));
 app.get("/overdueBook", (req, res) => res.render("overdueBook"));
-app.get("/cover", (req, res) => res.render("cover"));
+app.get("/", (req, res) => res.render("cover"));
 
 // Error Handling Middleware
 app.use(errorHandler);
