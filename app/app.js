@@ -42,6 +42,9 @@ app.get("/login", function (req, res) {
 app.get("/dashBoard", function (req, res) {
   res.render("dashBoard");
 });
+app.get("/userDashBoard", function (req, res) {
+  res.render("userDashBoard");
+});
 app.get("/uploadBook", function (req, res) {
   res.render("uploadBook");
 });
