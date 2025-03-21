@@ -1,21 +1,26 @@
 // Import express.js
 const express = require("express");
-const session = require('express-session');
-const logger = require('./utils/logger');
-const { errorHandler } = require('./middleware/errorMiddleware');
-const { ensureAuthenticated, ensureAdmin, ensureUser } = require('./middleware/authMiddleware');
-
+const session = require("express-session");
+const logger = require("./utils/logger");
+const { errorHandler } = require("./middleware/errorMiddleware");
+const {
+  ensureAuthenticated,
+  ensureAdmin,
+  ensureUser,
+} = require("./middleware/authMiddleware");
 
 // Create express app
 const app = express();
 
 // Session setup
-app.use(session({
-  secret: process.env.SESSION_KEY, 
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false, httpOnly: true, maxAge: 60 * 60 * 1000 }, // 1-hour expiry
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, httpOnly: true, maxAge: 60 * 60 * 1000 }, // 1-hour expiry
+  })
+);
 
 // Add static files location
 app.use(express.static("public")); // Add this line
@@ -34,8 +39,6 @@ app.set("views", "./app/views");
 // Get the functions in the db.js file to use
 const db = require("./services/db");
 
-
-
 // Create a route for testing the db
 app.get("/db_test", function (req, res) {
   // Assumes a table called test_table exists in your database
@@ -46,17 +49,15 @@ app.get("/db_test", function (req, res) {
   });
 });
 
-
 // Routes
-app.use('/auth', require('./routes/authRoutes'));
+app.use("/auth", require("./routes/authRoutes"));
 
-app.get('/admin/dashboard', ensureAuthenticated, ensureAdmin, (req, res) => {
-  res.render('adminDashboard', { user: req.session.user });
+app.get("/admin/dashboard", ensureAuthenticated, ensureAdmin, (req, res) => {
+  res.render("adminDashboard", { user: req.session.user });
 });
 
-app.get('/dashboard', ensureAuthenticated, ensureUser, (req, res) => {
-  res.render('userDashboard', { user: req.session.user });
->>>>>>> 9e92053f0f991c35ea675c3ff469b6111ad3b692
+app.get("/dashBoard", ensureAuthenticated, ensureUser, (req, res) => {
+  res.render("dashBoard", { user: req.session.user });
 });
 
 app.get("/login", function (req, res, next) {
@@ -88,11 +89,10 @@ app.get("/cover", function (req, res) {
   res.render("cover");
 });
 
-
 app.use(errorHandler);
 
 // Start server on port 3000
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => cconsole.log(`Server running at http://127.0.0.1:${PORT}/`));
-
-
+app.listen(PORT, () =>
+  cconsole.log(`Server running at http://127.0.0.1:${PORT}/`)
+);
