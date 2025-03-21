@@ -1,4 +1,7 @@
+// middlewares/errorMiddleware.js
+const logger = require('../utils/logger');
+
 exports.errorHandler = (err, req, res, next) => {
-    console.error(`❌ Error: ${err.message}`);
-    res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
+  logger.error(`Error: ${err.message}`);
+  res.status(err.status || 500).json({ error: err.message });
 };

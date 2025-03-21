@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { query } = require('../services/db');
 const rateLimit = require('express-rate-limit'); // For rate limiting
 const logger = require('../utils/logger'); // Custom logger for logging errors
