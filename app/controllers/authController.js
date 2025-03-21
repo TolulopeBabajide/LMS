@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { query } = require('../services/db');
 const rateLimit = require('express-rate-limit'); // For rate limiting
 const logger = require('../utils/logger'); // Custom logger for logging errors
+const User = require('../models/User');
 
 // Rate limiter for login endpoints to prevent brute-force attacks
 const loginLimiter = rateLimit({
@@ -24,18 +25,32 @@ exports.registerPage = (req, res) => {
 
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const sql = 'INSERT INTO Users (username, password_hash, email, role) VALUES (?, ?, ?, ?)';
 
     try {
-        await query(sql, [username, hashedPassword, email, 'library_user']);
-        res.status(201).json({ message: 'User registered successfully' });
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a new user using Sequelize
+        const newUser = await User.create({
+            username,
+            email,
+            password_hash: hashedPassword, // Sequelize will handle the hashing in the model hook
+            role: 'library_user', // Default role
+        });
+
+        // Log the successful registration
+        logger.info(`User registered: ${newUser.username}`);
+
+        // Send success response
+        res.status(201).json({ message: 'User registered successfully', user: newUser });
     } catch (error) {
+        // Log the error
+        logger.error(`Error registering user: ${error.message}`);
+
+        // Send error response
         res.status(500).json({ error: 'Failed to register user' });
     }
-};
-
+}
 
 // Admin Login Logic
 exports.adminLogin = [loginLimiter, async (req, res) => {

@@ -1,35 +1,33 @@
-require("dotenv").config();
+require('dotenv').config();
+const { Sequelize } = require('sequelize');
 
-const mysql = require('mysql2/promise');
+// Create a Sequelize instance
+const sequelize = new Sequelize(
+    process.env.MYSQL_DATABASE, // Database name
+    process.env.MYSQL_ROOT_USER, // Database user
+    process.env.MYSQL_ROOT_PASSWORD, // Database password
+    {
+        host: process.env.DB_CONTAINER, // Database host
+        port: process.env.DB_PORT, // Database port
+        dialect: 'mysql', // Database dialect
+        pool: {
+            max: 10, // Maximum number of connections in the pool
+            min: 0, // Minimum number of connections in the pool
+            acquire: 30000, // Maximum time (in milliseconds) that a connection can be idle before being released
+            idle: 10000, // Maximum time (in milliseconds) that a connection can be idle before being released
+        },
+        logging: false, // Disable logging for production
+    }
+);
 
-const config = {
-  db: { /* do not put password or any sensitive info here, done only for demo */
-    host: process.env.DB_CONTAINER,
-    port: process.env.DB_PORT,
-    user: process.env.MYSQL_ROOT_USER,
-    password: process.env.MYSQL_ROOT_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    waitForConnections: true,
-    connectionLimit: 10,    // Increased for better scalability
-    queueLimit: 0,
-    acquireTimeout: 30000   // Prevents excessive wait times
-  },
-};
-  
-const pool = mysql.createPool(config.db);
+// Test the database connection
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('✅ Database connection has been established successfully.');
+    } catch (error) {
+        console.error('❌ Unable to connect to the database:', error);
+    }
+})();
 
-// Utility function to query the database
-async function query(sql, params) {
-  try {
-    const [rows, fields] = await pool.execute(sql, params);
-    return rows;
-  } catch (error) {
-    console.error(`❌ Database query failed: ${error.message}`);
-    throw new Error('Database query error');
-  }
-}
-
-
-module.exports = {
-  query,
-}
+module.exports = sequelize;

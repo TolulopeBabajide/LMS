@@ -60,14 +60,11 @@ app.get('/admin/dashboard', ensureAuthenticated, ensureAdmin, (req, res) => {
   res.render('adminDashboard', { user: req.session.user });
 });
 
+app.get("/register", function (req, res) {
+  res.render("signup");
+});
 app.get("/login", function (req, res) {
   res.render("login");
-});
-app.get("/adminDashBoard", function (req, res) {
-  res.render("adminDashBoard");
-});
-app.get("/userDashBoard", function (req, res) {
-  res.render("userDashBoard");
 });
 app.get("/uploadBook", function (req, res) {
   res.render("uploadBook");
@@ -88,11 +85,6 @@ app.get('/user/dashboard', ensureAuthenticated, ensureUser, (req, res) => {
 });
 
 // General Views
-app.get("/login", (req, res) => res.render("login"));
-app.get("/uploadBook", (req, res) => res.render("uploadBook"));
-app.get("/uploadBookList", (req, res) => res.render("uploadBookList"));
-app.get("/uploadSuccessful", (req, res) => res.render("uploadSuccessful"));
-app.get("/overdueBook", (req, res) => res.render("overdueBook"));
 app.get("/cover", (req, res) => res.render("cover"));
 
 // Error Handling Middleware

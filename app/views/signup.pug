@@ -1,4 +1,3 @@
-
 html(lang="en")
   head
     meta(charset="UTF-8")
@@ -10,39 +9,36 @@ html(lang="en")
     .signup-container
       h1 Create an Account
       p Get instant access to books at the comfort of wherever you are with BOOK ORBIT.
-      form#signup-form
-        .form-name
-          .form-group
-            label.name(for="first-name") Name
-              input(type="text" id="first-name" name="first-name" placeholder="Enter First name" required)
-              span.error-message Required
-          .form-group
-            label.name(for="other-name") Other name
-              input(type="text" id="other-name" name="other-name" placeholder="Enter other name" required)
-              span.error-message Required
+      form#signup-form(action="/auth/register" method="POST")
         .form-group
-          label.email(for="email") Email
-            input(type="email" id="email" name="email" placeholder="Enter Email here" required)
-            span.error-message Required
-        .form-name
-          .form-group
-            label.password(for="password") Password
-              input.password(type="password" id="password" name="password" placeholder="Enter password here" required minlength="8")
-              span.error-message Required
-              p.password-hint Password should consist of 8 characters.
-          .form-group
-            label.password(for="confirm-password") Confirm Password
-              input(type="password" id="confirm-password" name="confirm-password" placeholder="Confirm password" required minlength="8")
-              span.error-message Required
-              p.password-hint Password should consist of 8 characters.
+          label(for="username") Username
+          input(type="text" id="username" name="username" placeholder="Enter your username" required)
+          span.error-message Required
+        .form-group
+          label(for="email") Email
+          input(type="email" id="email" name="email" placeholder="Enter Email here" required)
+          span.error-message Required
+        .form-group
+          label(for="password") Password
+          input(type="password" id="password" name="password" placeholder="Enter password here" required minlength="8")
+          span.error-message Required
+          p.password-hint Password should consist of 8 characters.
+        .form-group
+          label(for="confirm-password") Confirm Password
+          input(type="password" id="confirm-password" name="confirm-password" placeholder="Confirm password" required minlength="8")
+          span.error-message Required
+          p.password-hint Password should consist of 8 characters.
         button(type="submit") Create account
       p.login-link Already have an account? 
         a(href="/login") Log in
+
+    // Success Popup
     #success-popup.popup
       .popup-content
         .success
           h5 Successful
-          p Account Created successful!
+          p Account Created successfully!
           a(href="/login") Log In
-            button#close-popup Close
+          button#close-popup Close
+
     script(src="/js/signup.js")

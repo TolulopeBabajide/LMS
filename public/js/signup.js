@@ -1,48 +1,53 @@
-document
-  .getElementById("signup-form")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+document.getElementById('signup-form').addEventListener('submit', async (event) => {
+  event.preventDefault(); // Prevent the default form submission
 
-    const firstName = document.getElementById("first-name");
-    const otherName = document.getElementById("other-name");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const confirmPassword = document.getElementById("confirm-password");
+  const form = event.target;
+  const formData = new FormData(form);
 
-    let isValid = true;
+  // Get form values
+  const username = formData.get('username');
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const confirmPassword = formData.get('confirm-password');
 
-    if (!firstName.value) {
-      showError(firstName);
-      isValid = false;
-    }
-    if (!otherName.value) {
-      showError(otherName);
-      isValid = false;
-    }
-    if (!email.value || !email.checkValidity()) {
-      showError(email);
-      isValid = false;
-    }
-    if (!password.value || password.value.length < 8) {
-      showError(password);
-      isValid = false;
-    }
-    if (!confirmPassword.value || confirmPassword.value !== password.value) {
-      showError(confirmPassword);
-      isValid = false;
-    }
+  // Validate password match
+  if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+  }
 
-    if (isValid) {
-      document.getElementById("success-popup").style.display = "flex";
-    }
-  });
+  // Convert form data to JSON
+  const data = {
+      username,
+      email,
+      password,
+  };
 
-function showError(input) {
-  const errorMessage = input.parentElement.querySelector(".error-message");
-  errorMessage.style.display = "block";
-  input.style.borderColor = "red";
-}
+  try {
+      // Send a POST request to the /register route
+      const response = await fetch('/register', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
 
-document.getElementById("close-popup").addEventListener("click", function () {
-  document.getElementById("success-popup").style.display = "none";
+      if (response.ok) {
+          // Show the success popup
+          document.getElementById('success-popup').style.display = 'flex';
+      } else {
+          // Handle errors (e.g., display error messages)
+          const errorData = await response.json();
+          alert(`Error: ${errorData.error}`);
+      }
+  } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+  }
+});
+
+// Close the success popup
+document.getElementById('close-popup').addEventListener('click', () => {
+  document.getElementById('success-popup').style.display = 'none';
 });
