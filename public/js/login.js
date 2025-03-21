@@ -2,45 +2,100 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("login-form-login");
 
   if (loginForm) {
-    loginForm.addEventListener("submit", function (event) {
+    loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const email = document.getElementById("email-login");
-      const password = document.getElementById("password-login");
+      const form = event.target;
+      const submitButton = form.querySelector('button[type="submit"]');
+      const formData = new FormData(form);
 
-      let isValid = true;
+      // Get form values
+      const username = formData.get('username');
+      const password = formData.get('password');
 
-      document.querySelectorAll(".error-message-login").forEach((msg) => {
-        msg.style.display = "none";
+      // Reset error messages
+      document.querySelectorAll('.error-message').forEach(error => {
+        error.style.display = 'none';
       });
-      document.querySelectorAll("input").forEach((input) => {
-        input.style.borderColor = "#ccc"; // Reset border color
-      });
 
-      if (!email.value || !email.checkValidity()) {
-        showError(email);
-        isValid = false;
-      }
+      // Show loading state
+      submitButton.disabled = true;
+      submitButton.classList.add('loading');
 
-      if (!password.value || password.value.length < 8) {
-        showError(password);
-        isValid = false;
-      }
+      try {
+        const response = await fetch('/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password
+          }),
+          redirect: 'follow'
+        });
 
-      if (isValid) {
-        document.getElementById("success-popup-login").style.display = "flex";
+        // If the response redirects, follow it
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+
+        // Handle non-redirect responses (errors)
+        const data = await response.json();
+        
+        if (!response.ok) {
+          const errorMessage = data.error || 'Invalid username or password';
+          const usernameInput = document.getElementById('username');
+          const errorSpan = usernameInput.nextElementSibling;
+          errorSpan.textContent = errorMessage;
+          errorSpan.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        const usernameInput = document.getElementById('username');
+        const errorSpan = usernameInput.nextElementSibling;
+        errorSpan.textContent = 'An error occurred. Please try again.';
+        errorSpan.style.display = 'block';
+      } finally {
+        // Reset button state
+        submitButton.disabled = false;
+        submitButton.classList.remove('loading');
       }
     });
   }
 
-  function showError(input) {
-    const errorMessage = input.parentElement.querySelector(
-      ".error-message-login"
-    );
-    if (errorMessage) {
-      errorMessage.style.display = "block";
-      input.style.borderColor = "red";
-    }
+  // Password toggle functionality
+  document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', function() {
+      const input = this.previousElementSibling;
+      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+      input.setAttribute('type', type);
+      
+      // Toggle eye icon
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+  });
+
+  function showError(fieldId, message) {
+    const input = document.getElementById(fieldId);
+    const errorSpan = input.parentElement.querySelector('.error-message');
+    input.classList.add('error');
+    errorSpan.textContent = message;
+    errorSpan.style.display = 'block';
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function determineErrorField(errorMessage) {
+    const message = errorMessage.toLowerCase();
+    if (message.includes('username')) return 'username';
+    if (message.includes('password')) return 'password';
+    return 'username'; // Default to username field
   }
 
   const closePopupButton = document.getElementById("close-popup-login");
