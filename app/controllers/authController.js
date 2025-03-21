@@ -27,15 +27,12 @@ exports.register = async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         // Create a new user using Sequelize
         const newUser = await User.create({
             username,
             email,
-            password_hash: hashedPassword, // Sequelize will handle the hashing in the model hook
-            role: 'library_user', // Default role
+            password_hash: password, // Note: the hook will hash this
+            role: 'library_user',
         });
 
         // Log the successful registration
@@ -94,46 +91,40 @@ exports.adminLogin = [loginLimiter, async (req, res) => {
 }];
 
 // User Login Logic
-exports.userLogin = [loginLimiter, async (req, res) => {
+exports.userLogin = async (req, res) => {
     const { username, password } = req.body;
 
-    // Input validation
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
-    }
-    
-    const sql = 'SELECT * FROM Users WHERE username = ? AND role = "library_user"';
-
     try {
-        const users = await query(sql, [username]);
-        const user = users[0];
+        // Find the user
+        const user = await User.findOne({
+            where: {
+                username: username,
+                role: 'library_user'
+            }
+        });
 
-        // Check if user exists
         if (!user) {
-            logger.warn(`User login attempt failed: User not found for username ${username}`);
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Invalid username or password' });
         }
 
-        // Compare provided password with hashed password in the database
-        const isMatch = await bcrypt.compare(password, user.password_hash);
-        if (!isMatch) {
-            logger.warn(`User login attempt failed: Invalid credentials for username ${username}`);
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
+    
 
-        // Set session with user data and expiry
-        req.session.user = user;
-        req.session.cookie.expires = new Date(Date.now() + 60 * 60 * 1000); // 1-hour session expiry
-        req.session.cookie.secure = false; // Ensure cookies are only sent over HTTPS
+        // Set session
+        req.session.user = {
+            id: user.user_id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        };
 
-        logger.info(`User login successful for username ${username}`);
-        res.redirect('/dashboard');
+        // Instead of sending JSON response, redirect directly to dashboard
+        res.redirect('/user/dashboard');
+
     } catch (error) {
-        logger.error(`User login failed: ${error.message}`);
-        res.status(500).json({ error: 'User login failed' });
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Login failed. Please try again.' });
     }
-}];
-
+};
 
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
