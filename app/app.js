@@ -12,6 +12,10 @@ dotenv.config(); // Load environment variables
 // Create express app
 const app = express();
 
+// Body parser middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Session setup
 app.use(session({
   secret: process.env.SESSION_KEY,
