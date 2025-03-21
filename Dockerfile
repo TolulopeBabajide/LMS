@@ -18,6 +18,8 @@ COPY . /src
 EXPOSE 3000
 
 
+
+
 # FROM node:latest
 
 # # Set the correct working directory (use /app instead of /src)
