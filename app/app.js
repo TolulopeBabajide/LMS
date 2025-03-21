@@ -32,12 +32,19 @@ app.get("/db_test", function (req, res) {
 
 // Create a route for /goodbye
 // Responds to a 'GET' request
-app.get("/goodbye", function (req, res) {
+app.get("/goodbye", function (req, res, next) {
   res.send("Goodbye frank!");
+  next();
 });
 
-app.get("/login", function (req, res) {
+app.get("/login", function (req, res, next) {
   res.render("login");
+  next();
+});
+
+app.get("/signup", function (req, res, next) {
+  res.render("signup");
+  next();
 });
 
 app.get("/cover", function (req, res) {
