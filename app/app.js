@@ -60,6 +60,28 @@ app.get('/admin/dashboard', ensureAuthenticated, ensureAdmin, (req, res) => {
   res.render('adminDashboard', { user: req.session.user });
 });
 
+app.get("/login", function (req, res) {
+  res.render("login");
+});
+app.get("/adminDashBoard", function (req, res) {
+  res.render("adminDashBoard");
+});
+app.get("/userDashBoard", function (req, res) {
+  res.render("userDashBoard");
+});
+app.get("/uploadBook", function (req, res) {
+  res.render("uploadBook");
+});
+app.get("/uploadBookList", function (req, res) {
+  res.render("uploadBookList");
+});
+app.get("/uploadSucessfull", function (req, res) {
+  res.render("uploadSucessfull");
+});
+app.get("/overdueBook", function (req, res) {
+  res.render("overdueBook");
+}
+);
 // User Dashboard (Only accessible to Library Users)
 app.get('/user/dashboard', ensureAuthenticated, ensureUser, (req, res) => {
   res.render('userDashboard', { user: req.session.user });
