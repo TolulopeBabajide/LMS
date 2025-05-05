@@ -13,17 +13,17 @@ dotenv.config(); // Load environment variables
 const app = express();
 
 // Session setup
-app.use(session({
-  secret: process.env.SESSION_KEY,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-    httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-    maxAge: 60 * 60 * 1000, // 1-hour expiry
-    sameSite: 'strict', // Prevent CSRF attacks
-  },
-}));
+// app.use(session({
+//   secret: process.env.SESSION_KEY,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+//     httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+//     maxAge: 60 * 60 * 1000, // 1-hour expiry
+//     sameSite: 'strict', // Prevent CSRF attacks
+//   },
+// }));
 
 // Add static files location
 app.use(express.static("public"));
