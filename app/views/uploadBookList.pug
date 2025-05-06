@@ -1,0 +1,261 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&family=Euphoria+Script&display=swap" rel="stylesheet")
+    link(href="/css/upload.css", rel="stylesheet")
+    link(href="/css/reusable.css", rel="stylesheet")
+    title Book List Upload - BookOrbit
+
+  body
+    .top-navbar
+      h1.logo-text BookOrbit
+      h1.text-xl.font-semibold.pl-3 Admin Dashboard
+      .flex.items-center.gap-4.ml-auto
+        button.relative
+          //- i.fas.fa-bell
+          //- span.notification-badge 1
+        .w-8.h-8.rounded-full.overflow-hidden(style="background-color: #dccdbe;")
+          img(src="https://placehold.co/30x30/dccdbe/ffffff?text=U" alt="User")#profile-picture
+    
+    .flex
+      //- Sidebar
+      .sidebar
+        .sidebar-nav
+          a.nav-item(href="/admin/dashboard")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              path(d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z")
+              polyline(points="9 22 9 12 15 12 15 22")
+            span Dashboard
+          a.nav-item.active(href="/admin/upload-book-list")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              path(d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20")
+            span Book List
+          a.nav-item(href="/admin/upload-book")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              path(d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4")
+              polyline(points="17 8 12 3 7 8")
+              line(x1="12", x2="12", y1="3", y2="15")
+            span Upload Book
+          a.nav-item(href="/admin/messages")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              path(d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z")
+            span Messages
+          a.nav-item(href="/admin/users")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              path(d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2")
+              circle(cx="9", cy="7", r="4")
+              path(d="M22 21v-2a4 4 0 0 0-3-3.87")
+              path(d="M16 3.13a4 4 0 0 1 0 7.75")
+            span Users
+
+      //- Main Content
+      .main-content
+        //- Error Modal
+        .modal#errorModal
+          .modal-content
+            .modal-header
+              h3 Error
+              button.close-modal ×
+            .modal-body
+              p#errorMessage
+
+        //- Upload Section
+        .upload-section.bg-white.p-6.rounded-lg.shadow-sm.mb-8
+          h2.text-2xl.font-bold.mb-4 Upload Book List
+          p.text-gray-600.mb-8 Upload a JSON file containing multiple books to add them to the library
+
+          .upload-container.border-2.border-dashed.border-gray-300.rounded-lg.p-8.text-center
+            input#fileInput(type="file" accept=".json" class="hidden")
+            .upload-prompt.cursor-pointer(onclick="document.getElementById('fileInput').click()")
+              svg.mx-auto.mb-4(xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                path(d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4")
+                polyline(points="17 8 12 3 7 8")
+                line(x1="12" x2="12" y1="3" y2="15")
+              p.text-lg.font-medium.mb-2 Choose a JSON file or drag it here
+              p.text-sm.text-gray-500 Maximum file size: 5MB
+
+          .mt-8
+            h3.text-lg.font-medium.mb-4 JSON Format Example:
+            pre.bg-gray-100.p-4.rounded.text-sm.overflow-x-auto
+              code.
+                [
+                  {
+                    "title": "Book Title",
+                    "author": "Author Name",
+                    "description": "Book description...",
+                    "isbn": "978-0123456789",
+                    "genre": "Fiction",
+                    "no_of_copies": 5,
+                    "price": 29.99
+                  }
+                ]
+
+        //- Book List Section
+        .books-section
+          h2.section-title Uploaded Books
+          .table-container
+            table
+              thead
+                tr
+                  th S/N
+                  th Book name
+                  th Author's Name
+                  th ISBN No
+                  th Genre
+                  th Available copies
+                  th Price
+                  th Status
+              tbody#booksList
+                tr
+                  td(colspan="8").text-center Loading...
+
+          .pagination#paginationContainer
+            .page-numbers
+              button.page-btn.active-page 1
+              - for (var i = 2; i <= 5; i++)
+                button.page-btn.inactive-page= i
+              span.ellipsis ...
+              button.page-btn.inactive-page 100
+            .page-info
+              span.page-text 0-0 of 0
+
+  script.
+    document.addEventListener('DOMContentLoaded', async function() {
+      const fileInput = document.getElementById('fileInput');
+      const uploadContainer = document.querySelector('.upload-container');
+      const booksList = document.getElementById('booksList');
+      const errorModal = document.getElementById('errorModal');
+      const errorMessage = document.getElementById('errorMessage');
+      const closeModal = document.querySelector('.close-modal');
+
+      // Close modal handlers
+      closeModal.onclick = function() {
+        errorModal.style.display = 'none';
+      }
+
+      window.onclick = function(event) {
+        if (event.target === errorModal) {
+          errorModal.style.display = 'none';
+        }
+      }
+
+      // Show error modal
+      function showError(message, details) {
+        errorMessage.innerHTML = `${message}${details ? '<br><small>' + details + '</small>' : ''}`;
+        errorModal.style.display = 'block';
+      }
+
+      // Load books
+      async function loadBooks() {
+        try {
+          const response = await fetch('/admin/books');
+          if (!response.ok) {
+            throw new Error('Failed to fetch books');
+          }
+
+          const books = await response.json();
+          booksList.innerHTML = '';
+
+          books.forEach((book, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${book.title}</td>
+              <td>${book.author}</td>
+              <td>${book.isbn}</td>
+              <td>${book.genre}</td>
+              <td>${book.no_of_copies_available}/${book.no_of_copies}</td>
+              <td>$${book.price ? book.price.toFixed(2) : '0.00'}</td>
+              <td><span class="status-badge ${book.no_of_copies_available > 0 ? 'available' : 'not-available'}">${book.no_of_copies_available > 0 ? 'Available' : 'Not Available'}</span></td>
+            `;
+            booksList.appendChild(row);
+          });
+
+          // Update pagination info
+          const pageInfo = document.querySelector('.page-text');
+          pageInfo.textContent = `1-${books.length} of ${books.length}`;
+        } catch (error) {
+          console.error('Error:', error);
+          booksList.innerHTML = `
+            <tr>
+              <td colspan="8" class="text-center text-red-500">
+                Error loading books. Please try again later.
+              </td>
+            </tr>
+          `;
+        }
+      }
+
+      // Handle file upload
+      async function handleFile(file) {
+        if (file.type !== 'application/json') {
+          showError('Please upload a JSON file');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('bookList', file);
+
+        try {
+          const response = await fetch('/admin/upload-book-list', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            // Reload the book list to show new additions
+            loadBooks();
+            
+            // Show success message
+            const successCount = result.success.length;
+            const errorCount = result.errors.length;
+            let message = `Successfully added ${successCount} book${successCount !== 1 ? 's' : ''}`;
+            if (errorCount > 0) {
+              message += `\nFailed to add ${errorCount} book${errorCount !== 1 ? 's' : ''}`;
+              const errorDetails = result.errors.map(err => `ISBN ${err.isbn}: ${err.error}`).join('\n');
+              showError(message, errorDetails);
+            } else {
+              alert(message);
+            }
+          } else {
+            throw new Error(result.message || 'Failed to upload book list');
+          }
+        } catch (error) {
+          showError('Error uploading file', error.message);
+        }
+
+        // Reset file input
+        fileInput.value = '';
+      }
+
+      // Handle drag and drop
+      uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.add('border-blue-500');
+      });
+
+      uploadContainer.addEventListener('dragleave', () => {
+        uploadContainer.classList.remove('border-blue-500');
+      });
+
+      uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.remove('border-blue-500');
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      });
+
+      // Handle file input change
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFile(file);
+      });
+
+      // Initial load of books
+      loadBooks();
+    });
+
