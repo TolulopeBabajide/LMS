@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../services/db'); // Import the Sequelize instance
 const bcrypt = require('bcryptjs');
+const Like = require('./Like');
+const Book = require('./Book');
 
 const User = sequelize.define('User', {
     user_id: {
@@ -11,22 +13,52 @@ const User = sequelize.define('User', {
     username: {
         type: DataTypes.STRING(50),
         allowNull: false,
-        unique: true,
         validate: {
             notEmpty: true,
             len: [3, 50],
         },
     },
-    password_hash: {
-        type: DataTypes.STRING(255),
+    first_name: {
+        type: DataTypes.STRING(50),
         allowNull: false,
         validate: {
             notEmpty: true,
+            len: [2, 50],
         },
     },
-    password_salt: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
+    last_name: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+            notEmpty: true,
+            len: [2, 50],
+        },
+    },
+    email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        validate: {
+            isEmail: true,
+            notEmpty: true,
+            len: [5, 100],
+        },
+    },
+    password: {
+        type: DataTypes.STRING(60),
+        allowNull: false,
+    },
+    role: {
+        type: DataTypes.ENUM('admin', 'user'),
+        allowNull: false,
+        defaultValue: 'user',
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
     },
     password_reset_token: {
         type: DataTypes.STRING(255),
@@ -36,52 +68,47 @@ const User = sequelize.define('User', {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    email: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true,
-            notEmpty: true,
-            len: [5, 100],
-        },
-    },
-    role: {
-        type: DataTypes.ENUM('admin', 'library_user'),
-        allowNull: false,
-        defaultValue: 'library_user',
-    },
-    created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
 }, {
     tableName: 'Users',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    indexes: [
+        {
+            name: 'username_unique_idx',
+            unique: true,
+            fields: ['username']
+        },
+        {
+            name: 'email_unique_idx',
+            unique: true,
+            fields: ['email']
+        },
+        {
+            name: 'reset_token_idx',
+            fields: ['password_reset_token']
+        }
+    ],
     hooks: {
         beforeCreate: async (user) => {
-            if (user.password_hash) {
-                const saltRounds = 10;
-                const hashedPassword = await bcrypt.hash(user.password_hash, saltRounds);
-                user.password_hash = hashedPassword;
+            if (user.password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
             }
         },
         beforeUpdate: async (user) => {
-            if (user.changed('password_hash')) {
-                const saltRounds = 10;
-                const hashedPassword = await bcrypt.hash(user.password_hash, saltRounds);
-                user.password_hash = hashedPassword;
+            if (user.changed('password')) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
             }
-        },
-    },
+        }
+    }
 });
 
-User.prototype.comparePassword = async function (candidatePassword) {
+// Method to compare password
+User.prototype.comparePassword = async function(candidatePassword) {
     try {
-        
-        const isMatch = await bcrypt.compare(candidatePassword, this.password_hash);
-        console.log('Password match result:', isMatch);
-        return isMatch;
+        return await bcrypt.compare(candidatePassword, this.password);
     } catch (error) {
         console.error('Error comparing passwords:', error);
         return false;
