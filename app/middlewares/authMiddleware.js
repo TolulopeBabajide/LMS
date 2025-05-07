@@ -37,7 +37,10 @@ exports.ensureAdminAuthenticated = (req, res, next) => {
 
 // Ensure user is a regular user
 exports.ensureUser = (req, res, next) => {
-  if (req.session.user && req.session.user.role === "user") {
+  if (
+    req.session.user &&
+    req.session.user.role === "user"
+  ) {
     return next();
   }
   logger.warn(

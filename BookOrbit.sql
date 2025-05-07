@@ -1,11 +1,13 @@
--- Create the database
-CREATE DATABASE BookOrbit;
+-- Create the database if it doesn't exist
+CREATE DATABASE IF NOT EXISTS BookOrbit;
 USE BookOrbit;
 
 -- Users Table
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     password_salt VARCHAR(255),
     password_reset_token VARCHAR(255),
@@ -16,24 +18,31 @@ CREATE TABLE Users (
 );
 
 -- Books Table
-CREATE TABLE Books (
+CREATE TABLE IF NOT EXISTS Books (
     book_id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(150) NOT NULL,
-    author VARCHAR(100) NOT NULL,
-    genre VARCHAR(50) NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    availability_status ENUM('available', 'rented', 'sold') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image MEDIUMBLOB NOT NULL,
+    isbn VARCHAR(255) NOT NULL,
+    publishing_company VARCHAR(255) NOT NULL,
+    year_of_publication INT NOT NULL,
+    number_of_pages INT NOT NULL,
+    genre VARCHAR(255) NOT NULL,
+    no_of_copies INT NOT NULL,
+    no_of_copies_available INT NOT NULL,
+    about_author TEXT NOT NULL
 );
 
 -- Categories Table
-CREATE TABLE Categories (
+CREATE TABLE IF NOT EXISTS Categories (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Book-Categories (Many-to-Many Relationship)
-CREATE TABLE Book_Categories (
+CREATE TABLE IF NOT EXISTS Book_Categories (
     book_id INT,
     category_id INT,
     PRIMARY KEY (book_id, category_id),
@@ -42,7 +51,7 @@ CREATE TABLE Book_Categories (
 );
 
 -- Transactions Table
-CREATE TABLE Transactions (
+CREATE TABLE IF NOT EXISTS Transactions (
     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     book_id INT NOT NULL,
@@ -54,7 +63,7 @@ CREATE TABLE Transactions (
 );
 
 -- Wishlist Table
-CREATE TABLE Wishlist (
+CREATE TABLE IF NOT EXISTS Wishlist (
     wishlist_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     book_id INT NOT NULL,
@@ -64,7 +73,7 @@ CREATE TABLE Wishlist (
 );
 
 -- Reviews Table
-CREATE TABLE Reviews (
+CREATE TABLE IF NOT EXISTS Reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -76,9 +85,31 @@ CREATE TABLE Reviews (
 );
 
 -- Reports Table (for Admin Analytics)
-CREATE TABLE Reports (
+CREATE TABLE IF NOT EXISTS Reports (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
     report_name VARCHAR(100) NOT NULL,
     report_data JSON NOT NULL,
     generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Likes Table
+CREATE TABLE IF NOT EXISTS Likes (
+    like_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_like (user_id, book_id)
+);
+
+-- Stars Table
+CREATE TABLE IF NOT EXISTS Stars (
+    star_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_star (user_id, book_id)
 );

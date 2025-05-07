@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const loginForm = document.getElementById("login-form-login");
+  const loginForm = document.getElementById("login-form");
+
+  console.log(loginForm);
 
   if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
@@ -10,13 +12,41 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData(form);
 
       // Get form values
-      const username = formData.get('username');
+      const email = formData.get('email');
       const password = formData.get('password');
 
       // Reset error messages
       document.querySelectorAll('.error-message').forEach(error => {
         error.style.display = 'none';
       });
+
+      // Reset error states
+      document.querySelectorAll('.form-group').forEach(group => {
+        group.classList.remove('error');
+      });
+
+      // Validate inputs
+      let hasError = false;
+
+      if (!email) {
+        showError('email', 'Email is required');
+        hasError = true;
+      } else if (!isValidEmail(email)) {
+        showError('email', 'Please enter a valid email address');
+        hasError = true;
+      }
+
+      if (!password) {
+        showError('password', 'Password is required');
+        hasError = true;
+      } else if (password.length < 8) {
+        showError('password', 'Password must be at least 8 characters');
+        hasError = true;
+      }
+
+      if (hasError) {
+        return;
+      }
 
       // Show loading state
       submitButton.disabled = true;
@@ -29,34 +59,38 @@ document.addEventListener("DOMContentLoaded", function () {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username,
+            email,
             password
           }),
-          redirect: 'follow'
+          credentials: 'include' // Ensure cookies are sent
         });
 
-        // If the response redirects, follow it
-        if (response.redirected) {
-          window.location.href = response.url;
-          return;
-        }
-
-        // Handle non-redirect responses (errors)
         const data = await response.json();
         
-        if (!response.ok) {
-          const errorMessage = data.error || 'Invalid username or password';
-          const usernameInput = document.getElementById('username');
-          const errorSpan = usernameInput.nextElementSibling;
-          errorSpan.textContent = errorMessage;
-          errorSpan.style.display = 'block';
+        if (response.ok && data.success) {
+          // Store user info in localStorage if needed
+          if (data.user) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+          }
+          
+          // Show success message
+          const successPopup = document.getElementById('success-popup');
+          if (successPopup) {
+            successPopup.style.display = 'flex';
+          }
+          
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.location.href = data.redirect;
+          }, 1000);
+        } else {
+          const errorMessage = data.error || 'Invalid email or password';
+          const errorField = data.field || determineErrorField(errorMessage);
+          showError(errorField, errorMessage);
         }
       } catch (error) {
         console.error('Error:', error);
-        const usernameInput = document.getElementById('username');
-        const errorSpan = usernameInput.nextElementSibling;
-        errorSpan.textContent = 'An error occurred. Please try again.';
-        errorSpan.style.display = 'block';
+        showError('email', 'An error occurred. Please try again.');
       } finally {
         // Reset button state
         submitButton.disabled = false;
@@ -81,10 +115,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showError(fieldId, message) {
     const input = document.getElementById(fieldId);
-    const errorSpan = input.parentElement.querySelector('.error-message');
-    input.classList.add('error');
-    errorSpan.textContent = message;
-    errorSpan.style.display = 'block';
+    if (!input) return;
+
+    const formGroup = input.closest('.form-group');
+    if (!formGroup) return;
+
+    formGroup.classList.add('error');
+    const errorSpan = formGroup.querySelector('.error-message');
+    if (errorSpan) {
+      errorSpan.textContent = message;
+      errorSpan.style.display = 'block';
+    }
   }
 
   function isValidEmail(email) {
@@ -93,15 +134,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function determineErrorField(errorMessage) {
     const message = errorMessage.toLowerCase();
-    if (message.includes('username')) return 'username';
+    if (message.includes('email')) return 'email';
     if (message.includes('password')) return 'password';
-    return 'username'; // Default to username field
+    return 'email'; // Default to email field
   }
 
-  const closePopupButton = document.getElementById("close-popup-login");
+  const closePopupButton = document.getElementById("close-popup");
   if (closePopupButton) {
     closePopupButton.addEventListener("click", function () {
-      document.getElementById("success-popup-login").style.display = "none";
+      const successPopup = document.getElementById("success-popup");
+      if (successPopup) {
+        successPopup.style.display = "none";
+      }
     });
   }
 });

@@ -1,0 +1,238 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: #f5f5f5;
+  font-family: 'Inter', sans-serif;
+}
+
+.top-navbar {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-text {
+  font-family: 'Euphoria Script', cursive;
+  font-size: 1.5rem;
+  color: #6C5DD3;
+}
+
+.sidebar {
+  width: 80px;
+  background-color: #6C5DD3;
+}
+.book-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+.recently-borrowed-icon {
+  background-color: rgba(108, 93, 211, 0.1);
+  color: #6C5DD3;
+}
+.currently-reading-icon {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #FF9800;
+}
+.pending-returns-icon {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+}
+.borrow-button {
+  background-color: #3bcae3;
+  border-radius: 9999px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.borrow-button:hover {
+  background-color: #1fbbd6;
+}
+.available-badge {
+  background-color: #b6f6d0;
+  color: #129145;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  display: inline-block;
+  width: fit-content;
+}
+.completed-badge {
+  background-color: #7e77f8;
+  color: white;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+.read-more {
+  color: #3bcae3;
+  cursor: pointer;
+}
+.book-cover {
+  height: 160px;
+  width: 112px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.book-cover-small {
+  aspect-ratio: 2/3;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.star-filled {
+  color: #ee0355;
+}
+.star-empty {
+  color: #d6dae5;
+}
+.rotate-90 {
+  transform: rotate(90deg);
+  transform-origin: center;
+  display: inline-block;
+}
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  background-color: #ee0355;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+}
+.filter-button {
+  background-color: white;
+  border: 1px solid #d6dae5;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.buy-button {
+  background-color: white;
+  border: 1px solid #d6dae5;
+  border-radius: 9999px;
+  padding: 4px 16px;
+  font-size: 0.875rem;
+  color: #4b5563;
+  cursor: pointer;
+}
+.action-button {
+  color: #6E7191;
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+.action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+input {
+  outline: none;
+}
+.view-all {
+  color: #6C5DD3;
+  font-weight: 500;
+}
+.action-button.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.action-button.active {
+  color: #ee0355;
+}
+.like-button.active {
+  color: #ee0355;
+}
+.star-button.active {
+  color: #ffd700;
+}
+.unavailable-badge {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  display: inline-block;
+  width: fit-content;
+}
+.borrow-button.disabled {
+  background-color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.borrow-button.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.book-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.stat-count {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0A0A0A;
+  margin-bottom: 4px;
+}
+
+.book-card .more-options {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+/* Search */
+.top-search {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
