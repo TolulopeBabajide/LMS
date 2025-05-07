@@ -3,44 +3,60 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title Login - BOOK ORBIT
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+    
     link(rel="stylesheet", href="/css/styles.css")
   body
-    .background-login
-    .signup-container-login
+    .background
+    .signup-container
       h1 Welcome Back
-      p Hey there. Login to your account to continue enjoying books on the go!!
-
-      .google-signup
-        img(src="/images/google.png", alt="google")
-        p Sign up with google
-
-      .or
-        hr
-        p OR
-        hr
+      p Hey there. Login to your account to continue enjoying books on the go!
 
       // Login Form
-      form#login-form-login
-        .form-group-login
-          label.email-login(for="email-login") Email
-            input(type="email" id="email-login" name="email" placeholder="Enter Email here" required)
-            span.error-message-login 
-        .form-group-login
-          label.password-login(for="password-login") Password
-            input.password-login(type="password" id="password-login" name="password" placeholder="Enter password here" required minlength="8")
-            span.error-message-login
-        p.password-Login-hint Forget Password?
-        button(type="submit") Log In
-      p.login-link-login Don't have an account? 
-        a(href="/signup") Sign Up
+      form#login-form
+        .form-group
+          label(for="username")
+            i.fas.fa-user
+            span Username
+          input(type="text" id="username" name="username" placeholder="Enter your username" required)
+          span.error-message Required
+        .form-group
+          label(for="password")
+            i.fas.fa-lock
+            span Password
+          .password-input-container
+            input(type="password" id="password" name="password" placeholder="Enter password" required minlength="8")
+            button.toggle-password(type="button" tabindex="-1")
+              i.fas.fa-eye
+          span.error-message Required
+          a.forgot-password(href="/forgot-password") Forgot Password?
 
-    // Success Pop-up
-    
-    #success-popup-login.popup-login
-      .popup-content-login
-        .success-login
-          h5 Successful
-          p Login successful!
-          button#close-popup-login Close
+        button(type="submit")
+          span Log In
+          i.fas.fa-sign-in-alt
+
+        //- .social-login
+        //-   p.divider
+        //-     span OR
+        //-   button.google-login(type="button")
+        //-     img(src="/images/google.png", alt="Google")
+        //-     span Sign in with Google
+
+      p.signup-link Don't have an account? 
+        a(href="/register") Sign Up
+
+    // Success Popup
+    #success-popup.popup
+      .popup-content
+        .success
+          i.fas.fa-check-circle.success-icon
+          h5 Welcome Back!
+          p Login successful! Redirecting to your dashboard...
+          .popup-buttons
+            button#close-popup
+              i.fas.fa-times
+              span Close
 
     script(src="/js/login.js")
