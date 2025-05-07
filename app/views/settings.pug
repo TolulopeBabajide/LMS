@@ -17,13 +17,12 @@ html(lang="en")
         h1.logo-text BookOrbit
         h1.text-xl.font-semibold.pl-3 Settings
         .flex.items-center.gap-4.ml-auto
-          .w-8.h-8.rounded-full.overflow-hidden.bg-gray-200
-            img.profile-picture(src="/images/default-avatar.png" alt="User Profile Picture" style="object-fit:cover;")
+          .w-8.h-8.rounded-full.overflow-hidden(style="background-color: #dccdbe;")
+            img(src="https://placehold.co/40x40/dccdbe/ffffff?text=U" alt="User")#profile-picture
 
     .flex.h-full
       // Sidebar
       include partials/sidebar.pug
-      
       // Main Content
       .flex-1.flex.flex-row.bg-gray-50
         // Settings Menu
@@ -35,43 +34,30 @@ html(lang="en")
           button.bg-white.text-gray-400.font-semibold.rounded-md.px-4.py-2.text-left.cursor-not-allowed(disabled) My books
           button.bg-white.text-gray-400.font-semibold.rounded-md.px-4.py-2.text-left.cursor-not-allowed(disabled) Fines
           button.bg-white.text-gray-400.font-semibold.rounded-md.px-4.py-2.text-left.cursor-not-allowed(disabled) General settings
-        
         // Profile Section
         .flex-1.mt-10.ml-10.bg-white.rounded-xl.shadow-md.p-10
           h2.text-xl.font-semibold.mb-6 Profile
           .flex.items-center.gap-6.mb-8
-            .relative.w-20.h-20.rounded-full.overflow-hidden.bg-gray-200
-              img#profile-picture-large.w-full.h-full.object-cover(src="/images/default-avatar.png" alt="User Profile Picture")
-              .absolute.inset-0.bg-black.bg-opacity-40.flex.items-center.justify-center.opacity-0("hover:opacity-100").transition-opacity.cursor-pointer(onclick="document.getElementById('profilePicture').click()")
-                i.fas.fa-camera.text-white.text-xl
+            .w-20.h-20.rounded-full.overflow-hidden.bg-gray-200.flex.items-center.justify-center
+              i.fas.fa-user.text-4xl.text-gray-500
             .flex.flex-col
               span.text-lg.font-bold#profileName
               span.text-sm.text-gray-400#profileUsername
               span.text-sm.text-gray-500#profileEmail
           .flex.gap-4.mb-8
-            button#editProfileBtn(type="button" class="bg-blue-600 text-white font-semibold rounded-lg shadow-md px-6 py-2 hover:bg-blue-700 transition-colors") Edit Profile
-            button#deleteAccountBtn(type="button" class="bg-red-100 text-red-700 font-semibold rounded-lg shadow-md px-6 py-2 hover:bg-red-200 transition-colors") Delete Account
-          
+            button#editProfileBtn(type="button" class="bg-blue-600 text-white font-semibold rounded-lg shadow-md px-6 py-2 hover:bg-blue-700") Edit
+            button#deleteAccountBtn(type="button" class="bg-red-100 text-red-700 font-semibold rounded-lg shadow-md px-6 py-2 hover:bg-red-200") Delete Account
           // Profile Details Table
-          .bg-gray-50.rounded-lg.p-6
-            h3.text-lg.font-semibold.mb-4 Profile Information
-            table.w-full.text-left
-              tbody.space-y-4
-                tr
-                  td.font-semibold.py-2.text-gray-600 Name
-                  td#profileNameCell.py-2.text-gray-800
-                tr
-                  td.font-semibold.py-2.text-gray-600 Email
-                  td#profileEmailCell.py-2.text-gray-800
-                tr
-                  td.font-semibold.py-2.text-gray-600 Username
-                  td#profileUsernameCell.py-2.text-gray-800
-                tr
-                  td.font-semibold.py-2.text-gray-600 Member Since
-                  td#profileMemberSince.py-2.text-gray-800
-                tr
-                  td.font-semibold.py-2.text-gray-600 Last Updated
-                  td#profileLastUpdated.py-2.text-gray-800
-
+          table.w-full.text-left
+            tbody
+              tr
+                td.font-semibold.py-2 Name
+                td#profileNameCell.py-2
+              tr
+                td.font-semibold.py-2 Email
+                td#profileEmailCell.py-2
+              tr
+                td.font-semibold.py-2 Username
+                td#profileUsernameCell.py-2
   script(src="/js/settings.js")
   script(src="/js/sidebar.js") 
