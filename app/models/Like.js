@@ -15,22 +15,22 @@ const Like = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Users",
-        key: "user_id",
-      },
+        model: 'Users',
+        key: 'user_id'
+      }
     },
     book_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Books",
-        key: "book_id",
-      },
+        model: 'Books',
+        key: 'book_id'
+      }
     },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
-    },
+    }
   },
   {
     timestamps: true,
@@ -38,12 +38,12 @@ const Like = sequelize.define(
     updatedAt: false,
     indexes: [
       {
-        name: "like_unique_idx",
+        name: 'like_unique_idx',
         unique: true,
-        fields: ["user_id", "book_id"],
-      },
-    ],
+        fields: ['user_id', 'book_id']
+      }
+    ]
   }
 );
 
-module.exports = Like;
+module.exports = Like; 

@@ -1,0 +1,49 @@
+Custom License Agreement
+
+Copyright (c) 2024
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software under the following conditions:
+
+1. Non-Commercial Use Only
+   The Software may only be used for non-commercial purposes. Commercial use,
+   including but not limited to selling, renting, or using the Software for
+   profit-generating activities, is strictly prohibited without explicit
+   written permission from the copyright holder.
+
+2. No AI Use
+   The Software may not be used, in whole or in part, to train, develop, or
+   improve any artificial intelligence systems, machine learning models, or
+   similar technologies. This includes but is not limited to:
+   - Training language models
+   - Developing AI-based security tools
+   - Creating automated password cracking systems
+   - Using the Software as part of any AI training dataset
+
+3. Ethical Use
+   The Software is intended for legitimate security research, educational
+   purposes, and authorized penetration testing only. Users must:
+   - Obtain proper authorization before testing any systems
+   - Follow all applicable laws and regulations
+   - Respect privacy and data protection requirements
+   - Use the Software responsibly and ethically
+
+4. Attribution
+   Any use of the Software must include proper attribution to the original
+   authors and maintain all copyright notices.
+
+5. No Warranty
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+6. Termination
+   This license automatically terminates if you fail to comply with any of
+   its terms and conditions.
+
+By using this Software, you agree to be bound by the terms of this license. 

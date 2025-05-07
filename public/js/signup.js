@@ -1,14 +1,18 @@
 // Password toggle functionality
 document.querySelectorAll('.toggle-password').forEach(button => {
     button.addEventListener('click', function() {
-        const input = this.previousElementSibling;
-        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-        input.setAttribute('type', type);
-        
-        // Toggle eye icon
+        const input = this.parentElement.querySelector('input');
         const icon = this.querySelector('i');
-        icon.classList.toggle('fa-eye');
-        icon.classList.toggle('fa-eye-slash');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     });
 });
 
@@ -21,6 +25,8 @@ document.getElementById('signup-form').addEventListener('submit', async (event) 
     const formData = new FormData(form);
 
     // Get form values
+    const first_name = formData.get('first_name');
+    const last_name = formData.get('last_name');
     const username = formData.get('username');
     const email = formData.get('email');
     const password = formData.get('password');
@@ -37,6 +43,22 @@ document.getElementById('signup-form').addEventListener('submit', async (event) 
     // Validation
     let hasError = false;
     
+    if (!first_name) {
+        showError('first_name', 'First name is required');
+        hasError = true;
+    } else if (!/^[a-zA-Z]+$/.test(first_name)) {
+        showError('first_name', 'First name can only contain letters');
+        hasError = true;
+    }
+
+    if (!last_name) {
+        showError('last_name', 'Last name is required');
+        hasError = true;
+    } else if (!/^[a-zA-Z]+$/.test(last_name)) {
+        showError('last_name', 'Last name can only contain letters');
+        hasError = true;
+    }
+
     if (!username) {
         showError('username', 'Username is required');
         hasError = true;
@@ -79,9 +101,11 @@ document.getElementById('signup-form').addEventListener('submit', async (event) 
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                first_name,
+                last_name,
                 username,
                 email,
-                password,
+                password
             }),
         });
 
@@ -103,12 +127,20 @@ document.getElementById('signup-form').addEventListener('submit', async (event) 
                 window.location.href = '/login';
             }, 3000);
         } else {
-            const errorMessage = result.error || result.errors?.[0]?.msg || 'Registration failed. Please try again.';
-            showError(determineErrorField(errorMessage), errorMessage);
+            if (result.errors) {
+                // Handle validation errors
+                result.errors.forEach(error => {
+                    showError(error.path, error.message);
+                });
+            } else {
+                const errorField = result.field || 'form';
+                const errorMessage = result.error || 'Registration failed. Please try again.';
+                showError(errorField, errorMessage);
+            }
         }
     } catch (error) {
         console.error('Error:', error);
-        showError('username', 'An error occurred. Please try again.');
+        showError('form', 'An error occurred. Please try again.');
     } finally {
         // Reset button state
         submitButton.classList.remove('loading');
@@ -116,25 +148,21 @@ document.getElementById('signup-form').addEventListener('submit', async (event) 
     }
 });
 
-// Helper functions
+// Helper function to show errors
 function showError(fieldId, message) {
-    const input = document.getElementById(fieldId);
-    const errorSpan = input.parentElement.querySelector('.error-message');
-    input.classList.add('error');
-    errorSpan.textContent = message;
-    errorSpan.style.display = 'block';
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.classList.add('error');
+        const errorElement = field.parentElement.querySelector('.error-message');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    }
 }
 
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function determineErrorField(errorMessage) {
-    const message = errorMessage.toLowerCase();
-    if (message.includes('username')) return 'username';
-    if (message.includes('email')) return 'email';
-    if (message.includes('password')) return 'password';
-    return 'username'; // Default to username field
 }
 
 // Close the success popup

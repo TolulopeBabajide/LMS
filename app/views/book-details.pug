@@ -1,0 +1,403 @@
+//- Book Details Page
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title BookOrbit - 
+    link(href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet")
+    link(href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&family=Euphoria+Script&display=swap" rel="stylesheet")
+    link(href="/css/reusable.css" rel="stylesheet")
+    link(href="/css/user-dashboard.css" rel="stylesheet")
+    
+  body.h-screen
+    // Top Navbar
+    .top-navbar
+        h1.logo-text BookOrbit
+        h1.text-xl.font-semibold.pl-3
+        .flex.items-center.gap-4.ml-auto
+          .w-8.h-8.rounded-full.overflow-hidden.bg-gray-200
+            img.profile-picture(src="/images/default-avatar.png" alt="User" style="object-fit:cover;")
+
+    .flex.h-full
+      // Sidebar
+      .sidebar.flex.flex-col.items-center.py-8.bg-indigo-900.text-white.w-20
+        .flex.flex-col.items-center.gap-8
+          button.p-2.rounded-md.bg-white.bg-opacity-20(onclick="window.location.href='/user/dashboard'")
+            i.fas.fa-home
+          button.p-2.rounded-md(onclick="window.location.href='/user/books'")
+            i.fas.fa-book-open
+          button.p-2.rounded-md(onclick="window.location.href='/user/likes'")
+            i.fas.fa-heart
+          button.p-2.rounded-md(onclick="window.location.href='/user/starred'")
+            i.fas.fa-star
+          button#settingsBtn.p-2.rounded-md(onclick="window.location.href='/user/settings'")
+            i.fas.fa-cog
+          button#logoutBtn.p-2.rounded-md(type="button")
+            i.fas.fa-sign-out-alt
+      // Main Content
+      .flex-1.overflow-auto.h-full
+        .container.mx-auto.px-8.py-10
+          div(class="flex flex-col md:flex-row gap-10")
+            // Book Cover
+            div(class="w-full md:w-1/3 flex justify-center items-start")
+              .bg-white.shadow-lg.rounded-xl.overflow-hidden.p-6.flex.flex-col.items-center
+                img#bookImage.w-56.h-80.object-cover.rounded-lg.shadow-md(src="/images/default-book-cover.jpg" alt="Book Cover")
+                .mt-4
+                  span#availabilityBadge.px-4.py-1.text-sm.font-medium.rounded-full
+            // Book Details
+            .flex-1.space-y-6
+              h1#bookTitle.text-3xl.font-bold.text-gray-900.mb-2
+              h2#bookAuthor.text-lg.font-semibold.text-indigo-700.mb-1
+              .flex.flex-wrap.gap-6.mb-4
+                .flex.flex-col
+                  span.text-xs.text-gray-500 Page count
+                  span#pages.text-base.font-medium.text-gray-900
+                .flex.flex-col
+                  span.text-xs.text-gray-500 Language
+                  span.text-base.font-medium.text-gray-900 English
+                .flex.flex-col
+                  span.text-xs.text-gray-500 Publication date
+                  span#year.text-base.font-medium.text-gray-900
+                .flex.flex-col
+                  span.text-xs.text-gray-500 Publisher
+                  span#publisher.text-base.font-medium.text-gray-900
+              .flex.items-center.gap-2.mb-2
+                i.fas.fa-users.text-indigo-600
+                span.text-sm.text-gray-600 #[span#totalCopies] People borrowed this book
+              // Description
+              .bg-white.shadow-lg.rounded-xl.p-6.mb-2
+                h2.text-xl.font-semibold.text-gray-900.mb-2 Description
+                p#bookDescription.text-gray-700.leading-relaxed
+              // About Author
+              .bg-white.shadow-lg.rounded-xl.p-6.mb-2
+                h2.text-xl.font-semibold.text-gray-900.mb-2 About Author
+                p#aboutAuthor.text-gray-600.leading-relaxed
+              // Action Buttons
+              .flex.gap-4.mt-6
+                button#borrowBtn(type="button" class="py-3 px-8 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors") Borrow now
+                button#buyBtn(type="button" class="py-3 px-8 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition-colors") Buy now
+                button#returnBtn(type="button" class="py-3 px-8 bg-yellow-100 text-yellow-800 font-semibold rounded-lg shadow-md hover:bg-yellow-200 transition-colors hidden") Return
+          // Buy Confirmation Modal
+          #buyConfirmationModal.fixed.inset-0.bg-gray-600.bg-opacity-50.hidden.items-center.justify-center.z-50
+            .bg-white.rounded-lg.p-8.max-w-md.w-full.mx-4
+              h3.text-xl.font-semibold.text-gray-900.mb-4 Confirm Purchase
+              p.text-gray-600.mb-6 Are you sure you want to purchase this book?
+              .flex.justify-end.gap-4
+                button#cancelBuyBtn(type="button" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors") Cancel
+                button#confirmBuyBtn(type="button" class="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors") Confirm Purchase
+          // Borrow Modal
+          #borrowModal.fixed.inset-0.bg-gray-600.bg-opacity-50.hidden.items-center.justify-center.z-50
+            .bg-white.rounded-lg.p-8.max-w-md.w-full.mx-4
+              h3.text-xl.font-semibold.text-gray-900.mb-4 Borrow Book
+              p.text-gray-600.mb-4 Please select your borrow and return dates:
+              .mb-4
+                label.block.text-sm.font-medium.text-gray-700 Borrow Date
+                input#borrowDate.w-full.mt-1.p-2.border.rounded(type="date" min=new Date().toISOString().split('T')[0])
+              .mb-4
+                label.block.text-sm.font-medium.text-gray-700 Return Date
+                input#returnDate.w-full.mt-1.p-2.border.rounded(type="date" min=new Date().toISOString().split('T')[0])
+              .mb-4
+                p.text-sm.text-gray-600 Duration: <span id="duration">0</span> days
+                p.text-sm.text-gray-600 Total Price: $<span id="totalPrice">0.00</span>
+              .mb-4.p-2.bg-yellow-50.text-yellow-700.rounded
+                p.text-sm A 50p/day fine will be incurred and will be automatically charged to wallet.
+              .flex.justify-end.gap-4
+                button#cancelBorrowBtn(type="button" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors") Cancel
+                button#confirmBorrowBtn(type="button" class="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors") Confirm Borrow
+          // Toast notifications
+          #toast-container
+
+block scripts
+  script(src="/js/book-details.js")
+  script.
+    let bookData = null;
+    
+    async function fetchBookDetails() {
+      const loadingStates = {
+        start() {
+          const bookDetails = document.getElementById('bookDetails');
+          if (bookDetails) {
+            bookDetails.classList.add('opacity-50', 'relative');
+            const spinner = document.createElement('div');
+            spinner.id = 'loading-spinner';
+            spinner.className = 'absolute inset-0 flex items-center justify-center';
+            spinner.innerHTML = `
+              <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+            `;
+            bookDetails.appendChild(spinner);
+          }
+        },
+        end() {
+          const bookDetails = document.getElementById('bookDetails');
+          if (bookDetails) {
+            bookDetails.classList.remove('opacity-50', 'relative');
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) spinner.remove();
+          }
+        }
+      };
+
+      try {
+        loadingStates.start();
+        const bookId = window.location.pathname.split('/').pop();
+        
+        const response = await fetch(`/api/books/${bookId}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch book details');
+        }
+        
+        bookData = await response.json();
+        
+        if (!bookData) {
+          throw new Error('No book data received');
+        }
+
+        // Update UI with book details
+        const elements = {
+          title: document.getElementById('bookTitle'),
+          author: document.getElementById('bookAuthor'),
+          aboutAuthor: document.getElementById('aboutAuthor'),
+          description: document.getElementById('bookDescription'),
+          isbn: document.getElementById('isbn'),
+          genre: document.getElementById('genre'),
+          publisher: document.getElementById('publisher'),
+          year: document.getElementById('year'),
+          pages: document.getElementById('pages'),
+          totalCopies: document.getElementById('totalCopies'),
+          availableCopies: document.getElementById('availableCopies'),
+          dailyRentalPrice: document.getElementById('dailyRentalPrice')
+        };
+
+        // Safely update elements with proper null checks
+        Object.entries(elements).forEach(([key, element]) => {
+          if (element && bookData[key] !== undefined) {
+            element.textContent = bookData[key] || 'N/A';
+          }
+        });
+
+        // Handle special cases
+        if (elements.year && bookData.year_of_publication) {
+          elements.year.textContent = bookData.year_of_publication;
+        }
+        if (elements.publisher && bookData.publishing_company) {
+          elements.publisher.textContent = bookData.publishing_company;
+        }
+        if (elements.pages && bookData.number_of_pages) {
+          elements.pages.textContent = bookData.number_of_pages;
+        }
+
+        // Update book image with fallback
+        const bookImage = document.getElementById('bookImage');
+        if (bookImage) {
+          bookImage.src = bookData.cover_image || '/images/default-book-cover.jpg';
+          bookImage.onerror = () => {
+            bookImage.src = '/images/default-book-cover.jpg';
+          };
+        }
+
+        // Update availability badge
+        const availabilityBadge = document.getElementById('availabilityBadge');
+        if (availabilityBadge) {
+          const isAvailable = bookData.no_of_copies_available > 0;
+          availabilityBadge.className = `px-4 py-1 text-sm font-medium rounded-full ${
+            isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`;
+          availabilityBadge.textContent = isAvailable ? 'Available' : 'Not Available';
+        }
+
+        // Update like/star buttons
+        updateLikeButton(bookData.isLiked);
+        updateStarButton(bookData.isStarred);
+        
+        // Update borrow/return section
+        updateBorrowReturnSection(bookData);
+        
+        // Set up rental duration change handler
+        const rentalDuration = document.getElementById('rentalDuration');
+        if (rentalDuration) {
+          rentalDuration.addEventListener('change', updateRentalPrice);
+          updateRentalPrice(); // Initial calculation
+        }
+
+        // Show late fee alert if applicable
+        const lateFeeAlert = document.getElementById('lateFeeAlert');
+        if (lateFeeAlert && bookData.late_fee > 0) {
+          lateFeeAlert.innerHTML = `
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                  Late Fee: $${bookData.late_fee.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          `;
+          lateFeeAlert.classList.remove('hidden');
+        }
+
+        // Handle transaction status
+        const borrowSection = document.getElementById('borrowSection');
+        if (borrowSection && bookData.transaction_status) {
+          const statusClasses = {
+            'ACTIVE': 'text-blue-600',
+            'OVERDUE': 'text-red-600',
+            'COMPLETED': 'text-green-600',
+            'EXPIRED': 'text-gray-600',
+            'CANCELLED': 'text-gray-600'
+          };
+          
+          const statusElement = document.getElementById('transactionStatus');
+          if (statusElement) {
+            statusElement.textContent = bookData.transaction_status;
+            statusElement.className = `font-medium ${statusClasses[bookData.transaction_status] || 'text-gray-600'}`;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching book details:', error);
+        showToast(error.message || 'Failed to load book details', 'error');
+      } finally {
+        loadingStates.end();
+      }
+    }
+    
+    function updateRentalPrice() {
+      const duration = parseInt(document.getElementById('rentalDuration').value);
+      const dailyPrice = parseFloat(bookData.rental_price) || 0;
+      const totalPrice = dailyPrice * duration;
+      
+      document.getElementById('rentalPrice').textContent = `$${dailyPrice.toFixed(2)}`;
+      document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+    }
+    
+    function updateBorrowReturnSection(bookData) {
+      const borrowSection = document.getElementById('borrowSection');
+      if (!borrowSection) return;
+      
+      if (bookData.userBorrowed) {
+        const dueDate = new Date(bookData.rental_end_date);
+        const today = new Date();
+        const daysRemaining = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+        
+        document.getElementById('dueDate').textContent = dueDate.toLocaleDateString();
+        document.getElementById('daysRemaining').textContent = daysRemaining;
+        
+        if (daysRemaining < 0) {
+          document.getElementById('daysRemaining').classList.add('text-red-600');
+        }
+      }
+    }
+    
+    async function borrowBook() {
+      try {
+        const duration = parseInt(document.getElementById('rentalDuration').value);
+        const response = await fetch(`/user/books/${bookData.book_id}/borrow`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rental_duration: duration })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          bookData.no_of_copies_available--;
+          bookData.userBorrowed = true;
+          document.getElementById('availableCopies').textContent = bookData.no_of_copies_available;
+          updateBorrowReturnSection(bookData);
+          showToast(result.message);
+        } else {
+          showToast(result.error, 'error');
+        }
+      } catch (error) {
+        console.error('Error borrowing book:', error);
+        showToast('Failed to borrow book', 'error');
+      }
+    }
+    
+    async function returnBook() {
+      try {
+        const response = await fetch(`/user/books/${bookData.book_id}/return`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          bookData.no_of_copies_available++;
+          bookData.userBorrowed = false;
+          document.getElementById('availableCopies').textContent = bookData.no_of_copies_available;
+          updateBorrowReturnSection(bookData);
+          
+          if (result.details.lateFee > 0) {
+            const lateFeeAlert = document.getElementById('lateFeeAlert');
+            lateFeeAlert.textContent = `Late Fee: $${result.details.lateFee.toFixed(2)}`;
+            lateFeeAlert.classList.remove('hidden');
+          }
+          
+          showToast(result.message);
+        } else {
+          showToast(result.error, 'error');
+        }
+      } catch (error) {
+        console.error('Error returning book:', error);
+        showToast('Failed to return book', 'error');
+      }
+    }
+    
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toast-container') || createToastContainer();
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white font-medium shadow-lg transform transition-all duration-300 ${
+        type === 'success' ? 'bg-green-600' : 'bg-red-600'
+      }`;
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(1rem)';
+      toast.textContent = message;
+      
+      toastContainer.appendChild(toast);
+      
+      //- Trigger animation
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      });
+
+      //- Remove with animation
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(1rem)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    
+    function createToastContainer() {
+      const container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'fixed bottom-4 right-4 z-50 space-y-2';
+      document.body.appendChild(container);
+      return container;
+    }
+    
+    function updateLikeButton(isLiked) {
+      const likeBtn = document.getElementById('likeBtn');
+      const icon = likeBtn.querySelector('i');
+      icon.className = isLiked ? 'fas fa-heart text-red-500' : 'far fa-heart';
+      likeBtn.classList.toggle('active', isLiked);
+    }
+    
+    function updateStarButton(isStarred) {
+      const starBtn = document.getElementById('starBtn');
+      const icon = starBtn.querySelector('i');
+      icon.className = isStarred ? 'fas fa-star text-yellow-500' : 'far fa-star';
+      starBtn.classList.toggle('active', isStarred);
+    }
+    
+    //- Initialize page
+    document.addEventListener('DOMContentLoaded', fetchBookDetails); 

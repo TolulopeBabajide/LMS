@@ -52,6 +52,11 @@ const User = sequelize.define('User', {
         allowNull: false,
         defaultValue: 'user',
     },
+    profile_picture: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'Base64 encoded profile picture'
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

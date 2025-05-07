@@ -3,6 +3,7 @@ const { query } = require('../services/db');
 const rateLimit = require('express-rate-limit'); // For rate limiting
 const logger = require('../utils/logger'); // Custom logger for logging errors
 const User = require('../models/User');
+const { Sequelize } = require('sequelize');
 
 // Rate limiter for login endpoints to prevent brute-force attacks
 const loginLimiter = rateLimit({
@@ -12,25 +13,83 @@ const loginLimiter = rateLimit({
 });
 
 exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, first_name, last_name } = req.body;
 
     try {
-        // Create a new user using Sequelize
+        // Input validation
+        if (!username || !email || !password || !first_name || !last_name) {
+            return res.status(400).json({
+                error: 'All fields are required',
+                field: 'form'
+            });
+        }
+
+        // Check for existing username
+        const existingUsername = await User.findOne({
+            where: { username }
+        });
+
+        if (existingUsername) {
+            logger.warn(`Registration attempt failed: Username '${username}' already exists`);
+            return res.status(400).json({ 
+                error: 'Username already exists',
+                field: 'username'
+            });
+        }
+
+        // Check for existing email
+        const existingEmail = await User.findOne({
+            where: { email }
+        });
+
+        if (existingEmail) {
+            logger.warn(`Registration attempt failed: Email '${email}' already exists`);
+            return res.status(400).json({ 
+                error: 'Email already exists',
+                field: 'email'
+            });
+        }
+
+        // Create a new user (password will be hashed by the User model hook)
         const newUser = await User.create({
             username,
             email,
-            password_hash: password, // Note: the hook will hash this
-            role: 'library_user',
+            first_name,
+            last_name,
+            password, // Pass the plain password, it will be hashed by the model hook
+            role: 'user'
         });
 
         // Log the successful registration
         logger.info(`User registered: ${newUser.username}`);
 
+        // Set session
+        req.session.user = {
+            id: newUser.user_id,
+            username: newUser.username,
+            email: newUser.email,
+            role: newUser.role
+        };
+
         // Send success response
-        res.status(201).json({ message: 'User registered successfully', user: newUser });
+        res.status(201).json({ 
+            message: 'User registered successfully',
+            redirect: '/user/dashboard'
+        });
     } catch (error) {
         // Log the error
         logger.error(`Error registering user: ${error.message}`);
+
+        // Handle validation errors
+        if (error instanceof Sequelize.ValidationError) {
+            return res.status(400).json({ 
+                error: 'Validation error',
+                details: error.errors.map(err => ({
+                    field: err.path,
+                    message: err.message
+                }))
+            });
+        }
 
         // Send error response
         res.status(500).json({ error: 'Failed to register user' });
@@ -83,24 +142,32 @@ exports.adminLogin = [loginLimiter, async (req, res) => {
 
 // User Login Logic
 exports.userLogin = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-        // Find the user
+        // Find the user by email
         const user = await User.findOne({
             where: {
-                username: username,
+                email: email,
             }
         });
 
         if (!user) {
-            return res.status(401).json({ error: 'Invalid username or password' });
+            logger.warn(`Login attempt failed: User not found for email ${email}`);
+            return res.status(401).json({ 
+                error: 'Invalid email or password',
+                field: 'email'
+            });
         }
 
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid username or password' });
+            logger.warn(`Login attempt failed: Invalid password for email ${email}`);
+            return res.status(401).json({ 
+                error: 'Invalid email or password',
+                field: 'password'
+            });
         }
 
         // Set session
@@ -111,14 +178,28 @@ exports.userLogin = async (req, res) => {
             role: user.role
         };
 
-        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30); // 30 minutes
+        // Set session expiration
+        req.session.cookie.expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-        // Instead of sending JSON response, redirect directly to dashboard
-        res.redirect('/user/dashboard');
+        logger.info(`User login successful: ${user.username}`);
+
+        // Send success response with redirect URL
+        res.status(200).json({ 
+            success: true,
+            redirect: '/user/dashboard',
+            user: {
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
 
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed. Please try again.' });
+        logger.error(`Login error: ${error.message}`);
+        res.status(500).json({ 
+            error: 'Login failed. Please try again.',
+            field: 'email'
+        });
     }
 };
 
